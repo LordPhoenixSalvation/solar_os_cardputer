@@ -1,0 +1,98 @@
+# ==============================================================================
+# SolarOS Board Profile: M5Stack Cardputer (v1.1 OG)
+# ==============================================================================
+
+[board]
+name = "M5Stack Cardputer"
+arch = "esp32s3"
+revision = "1.1"
+vendor = "m5stack"
+
+# ------------------------------------------------------------------------------
+# System & Power Architecture
+# ------------------------------------------------------------------------------
+[power]
+type = "adc_divider"
+adc_channel = 0          # GPIO10 maps to ADC1 CH0 for battery level
+adc_pin = 10             # Hardware Battery Voltage Detection
+multiplier = 2.0         # 1:1 resistor divider scaling
+internal_cell_mah = 120  # Stamp-S3 internal lipo
+backpack_cell_mah = 1400 # Base plate lipo
+
+# ------------------------------------------------------------------------------
+# Display: 1.14" ST7789V2 TFT (240x135 SPI)
+# ------------------------------------------------------------------------------
+[display]
+driver = "st7789"
+width = 240
+height = 135
+offset_x = 40
+offset_y = 53
+rotation = 1             # Landscape orient mode
+color_depth = 16          # RGB565
+
+[display.pins]
+mosi = 21                # SPI Data (DAT)
+sclk = 40                # SPI Clock (SCK)
+cs   = 37                # Chip Select (CS)
+dc   = 35                # Data/Command (RS/DC)
+rst  = 33                # Reset (RST)
+backlight = 38           # Display Backlight (DISP_BL)
+
+[display.backlight]
+active_high = true
+default_level = 128      # PWM 0-255
+
+# ------------------------------------------------------------------------------
+# Input: 56-Key (4x14) Keyboard Matrix
+# Uses 74HC138 Demux for Column Decoding
+# ------------------------------------------------------------------------------
+[keyboard]
+type = "demux_matrix"
+rows = 4
+cols = 14
+
+[keyboard.pins]
+# 74HC138 Address Select Pins
+addr_a0 = 8
+addr_a1 = 9
+addr_a2 = 11
+
+# Row Inputs (GPIOS mapped to matrix rows)
+row_pins = [13, 15, 3, 4, 5, 6, 7] 
+
+# Dedicated Modifiers / Special Keys
+btn_user = 0             # Onboard G0 button (Top-left near screen)
+
+# ------------------------------------------------------------------------------
+# Audio Output: NS4168 I2S Amplifier
+# ------------------------------------------------------------------------------
+[audio]
+driver = "i2s_dac"
+chipset = "ns4168"
+sample_rate = 44100
+
+[audio.pins]
+bclk = 41                # Bit Clock
+ws   = 43                # Word Select (LRCLK)
+dout = 42                # Serial Data (SDATA)
+
+# ------------------------------------------------------------------------------
+# Storage: Onboard microSD Card Slot
+# ------------------------------------------------------------------------------
+[sdcard]
+interface = "spi"
+max_freq_hz = 20000000   # 20MHz SPI speed
+
+[sdcard.pins]
+mosi = 14
+miso = 39
+sclk = 40                # Shares SPI bus with ST7789
+cs   = 12
+
+# ------------------------------------------------------------------------------
+# Expansion Interface: HY2.0-4P (Grove Port)
+# ------------------------------------------------------------------------------
+[expansion.grove]
+g1 = 1                   # Default Tx / SDA
+g2 = 2                   # Default Rx / SCL
